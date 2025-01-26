@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String    // For credentials provider
+  sessions      Session[]
+  campaigns     Campaign[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  name        String
+  budgetGoal  Float
+  startDate   DateTime
+  endDate     DateTime
+  
+  // Target Demographics (stored as JSON strings)
+  targetAge   String   // Will store JSON array of age ranges
+  targetGender String  // Will store JSON array of genders
+  
+  // Target Geo
+  country     String?
+  state       String?
+  city        String?
+  zipCode     String?
+  
+  // Inventory / Publishers (stored as JSON string)
+  publishers  String   // Will store JSON array of selected publishers
+  
+  // Screens/Devices (stored as JSON string)
+  screens     String   // Will store JSON array of selected screens
+  
+  // Relations
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
