@@ -3,6 +3,20 @@
 ## Overview
 This project showcases a simple POC of what it may look like to create a system that allows users to create campaigns which would help them manage their video advertising with JamLoop's connected inventory.
 
+## Screenshots
+
+### Homescreen
+![Campaign Dashboard](docs/dashboard.png)
+*This is the homescreen. For now, it just shows you a campaign button.*
+
+### Campaign Dashboard
+![Create Campaign Form](docs/campaigns.png)
+*View and manage all your campaigns in one place*
+
+### Edit Campaign
+![Edit Campaign](docs/campaign-edit.png)
+*Easily update existing campaigns*
+
 ## Setup Instructions
 
 1. **Install Dependencies**
