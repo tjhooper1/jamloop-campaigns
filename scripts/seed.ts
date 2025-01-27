@@ -5,8 +5,7 @@ const { hash } = pkg;
 const prisma = new PrismaClient();
 
 async function main() {
-  try {
-    // Clear existing data
+  try {    
     await prisma.campaign.deleteMany();
     await prisma.user.deleteMany();
 

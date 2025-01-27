@@ -1,4 +1,3 @@
-// lib/auth.ts
 import { PrismaClient } from "@prisma/client";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -22,7 +21,6 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Missing email or password");
         }
 
-        // Find user in DB
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
@@ -50,7 +48,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/login", // We'll create this route in the app folder
+    signIn: "/login",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -66,6 +64,5 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  // Your NEXTAUTH_SECRET environment variable or a random string for dev
   secret: process.env.NEXTAUTH_SECRET || "some-dev-secret",
 };

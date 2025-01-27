@@ -47,8 +47,8 @@ model Campaign {
   endDate     DateTime
   
   // Target Demographics (stored as JSON strings)
-  targetAge   String   // Will store JSON array of age ranges
-  targetGender String  // Will store JSON array of genders
+  targetAge   String   
+  targetGender String 
   
   // Target Geo
   country     String?
@@ -57,12 +57,11 @@ model Campaign {
   zipCode     String?
   
   // Inventory / Publishers (stored as JSON string)
-  publishers  String   // Will store JSON array of selected publishers
+  publishers  String  
   
   // Screens/Devices (stored as JSON string)
-  screens     String   // Will store JSON array of selected screens
+  screens     String
   
-  // Relations
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   

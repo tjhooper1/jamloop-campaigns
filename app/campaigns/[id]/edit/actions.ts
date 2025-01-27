@@ -16,7 +16,6 @@ export async function updateCampaign(
     formData: FormData
 ): Promise<State> {
     try {
-        // Verify campaign ownership
         const existingCampaign = await prisma.campaign.findUnique({
             where: {
                 id: campaignId,
