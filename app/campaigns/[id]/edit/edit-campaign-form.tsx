@@ -147,19 +147,19 @@ export function EditCampaignForm({ campaign, userId }: { campaign: Campaign, use
                         label="Country"
                         name="country"
                         defaultValue={campaign.country || ''}
-                        placeholder="Enter country"                        
+                        placeholder="Enter country"
                     />
                     <FormInput
                         label="State"
                         name="state"
                         defaultValue={campaign.state || ''}
-                        placeholder="Enter state"                        
+                        placeholder="Enter state"
                     />
                     <FormInput
                         label="City"
                         name="city"
                         defaultValue={campaign.city || ''}
-                        placeholder="Enter city"                        
+                        placeholder="Enter city"
                     />
                     <FormInput
                         label="ZIP Code"
@@ -219,37 +219,37 @@ export function EditCampaignForm({ campaign, userId }: { campaign: Campaign, use
                 <div className="space-y-4">
                     <h2 className="text-xl font-semibold text-gray-700">Distribution</h2>
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                        <label className="block text-sm font-semibold text-gray-700">
                             Publishers
                         </label>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             {PUBLISHERS.map((publisher) => (
                                 <label
                                     key={publisher.id}
-                                    className="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50"
+                                    className="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     <input
                                         type="checkbox"
                                         name="publishers"
                                         value={publisher.id}
                                         defaultChecked={campaign.publishers.split(',').includes(publisher.id)}
-                                        className="h-4 w-4 rounded border-gray-300"                                        
+                                        className="h-4 w-4 rounded border-gray-300"
                                     />
-                                    <span className="text-gray-800 font-medium">{publisher.name}</span>
+                                    <span className="ml-3 text-gray-800 font-medium">{publisher.name}</span>
                                 </label>
                             ))}
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                        <label className="block text-sm font-semibold text-gray-700">
                             Screens
                         </label>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             {SCREENS.map((screen) => (
                                 <label
                                     key={screen.id}
-                                    className="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50"
+                                    className="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     <input
                                         type="checkbox"
@@ -258,7 +258,7 @@ export function EditCampaignForm({ campaign, userId }: { campaign: Campaign, use
                                         defaultChecked={campaign.screens.split(',').includes(screen.id)}
                                         className="h-4 w-4 rounded border-gray-300"
                                     />
-                                    <span className="text-gray-800 font-medium">{screen.name}</span>
+                                    <span className="ml-3 text-gray-800 font-medium">{screen.name}</span>
                                 </label>
                             ))}
                         </div>

@@ -116,10 +116,17 @@ export default function LoginPage() {
 
           <div className="mt-6">
             <div className="relative">
-              <div className="relative flex justify-center text-sm font-medium leading-6">
-                <span className="px-6 text-gray-600">
-                  Demo account: user1@example.com / password123
-                </span>
+              <div className="relative flex flex-col sm:flex-row justify-center gap-4 text-sm font-medium leading-6">
+                <div className="px-6 py-3 bg-gray-50 rounded-lg text-gray-600">
+                  <div className="font-semibold mb-1">Demo Account</div>
+                  <div>user1@example.com</div>
+                  <div>password123</div>
+                </div>
+                <div className="px-6 py-3 bg-gray-50 rounded-lg text-gray-600">
+                  <div className="font-semibold mb-1">Second Demo Account</div>
+                  <div>user2@example.com</div>
+                  <div>password456</div>
+                </div>
               </div>
             </div>
           </div>

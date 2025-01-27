@@ -215,11 +215,11 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                         <label className="block text-sm font-semibold text-gray-700">
                             Publishers
                         </label>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             {PUBLISHERS.map((publisher) => (
                                 <label
                                     key={publisher.id}
-                                    className="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50"
+                                    className="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     <input
                                         type="checkbox"
@@ -227,7 +227,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                                         value={publisher.id}
                                         className="h-4 w-4 rounded border-gray-300"
                                     />
-                                    <span className="text-gray-800 font-medium">{publisher.name}</span>
+                                    <span className="ml-3 text-gray-800 font-medium">{publisher.name}</span>
                                 </label>
                             ))}
                         </div>
@@ -237,11 +237,11 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                         <label className="block text-sm font-semibold text-gray-700">
                             Screens
                         </label>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             {SCREENS.map((screen) => (
                                 <label
                                     key={screen.id}
-                                    className="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50"
+                                    className="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     <input
                                         type="checkbox"
@@ -249,7 +249,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                                         value={screen.id}
                                         className="h-4 w-4 rounded border-gray-300"
                                     />
-                                    <span className="text-gray-800 font-medium">{screen.name}</span>
+                                    <span className="ml-3 text-gray-800 font-medium">{screen.name}</span>
                                 </label>
                             ))}
                         </div>
