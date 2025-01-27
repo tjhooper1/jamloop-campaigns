@@ -32,7 +32,10 @@ export const createCampaignSchema = z.object({
     country: z.string().optional(),
     state: z.string().optional(),
     city: z.string().optional(),
-    zipCode: z.string().optional(),
+    zipCode: z.string().optional().refine(
+        (val) => !val || /^\d{5}$/.test(val),
+        "Zip code must be 5 digits"
+    ),
     publishers: z.array(z.enum(publisherIds as [string, ...string[]])).min(1, "Select at least one publisher"),
     screens: z.array(z.enum(screenIds as [string, ...string[]])).min(1, "Select at least one screen")
 })

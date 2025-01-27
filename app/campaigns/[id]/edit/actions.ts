@@ -9,12 +9,28 @@ type State = {
     message: string | null;
 }
 
-export async function createCampaign(
+export async function updateCampaign(
+    campaignId: string,
     userId: string,
     state: State,
     formData: FormData
 ): Promise<State> {
     try {
+        // Verify campaign ownership
+        const existingCampaign = await prisma.campaign.findUnique({
+            where: {
+                id: campaignId,
+                userId
+            }
+        })
+
+        if (!existingCampaign) {
+            return {
+                errors: { auth: "Not authorized to edit this campaign" },
+                message: null
+            }
+        }
+
         const validatedFields = createCampaignSchema.parse({
             name: formData.get("name"),
             budgetGoal: Number(formData.get("budgetGoal")),
@@ -30,12 +46,15 @@ export async function createCampaign(
             screens: formData.getAll("screens"),
         })
 
-        await prisma.campaign.create({
+        await prisma.campaign.update({
+            where: {
+                id: campaignId,
+                userId
+            },
             data: {
                 ...validatedFields,
                 publishers: validatedFields.publishers.join(','),
                 screens: validatedFields.screens.join(','),
-                userId
             }
         })
 

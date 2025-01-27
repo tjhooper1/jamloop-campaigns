@@ -1,12 +1,13 @@
 'use client'
 
 import { useActionState, startTransition } from 'react'
-import { createCampaign } from '@/app/campaigns/create/actions'
 import { FormInput } from "@/app/components/ui/form-input"
 import { PUBLISHERS, SCREENS, GENDERS } from "@/lib/publishers"
 import { CreateCampaignInput, createCampaignSchema } from '@/lib/schemas/campaign'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Campaign } from '@prisma/client'
+import { updateCampaign } from './actions'
 
 type State = {
     errors: Record<string, string> | null;
@@ -18,13 +19,12 @@ const initialState: State = {
     message: null
 }
 
-export function CreateCampaignForm({ userId }: { userId: string }) {
+export function EditCampaignForm({ campaign, userId }: { campaign: Campaign, userId: string }) {
     const router = useRouter()
-    const [state, dispatch] = useActionState(createCampaign.bind(null, userId), initialState)
+    const [state, dispatch] = useActionState(updateCampaign.bind(null, campaign.id, userId), initialState)
     const [clientErrors, setClientErrors] = useState<Record<string, string[]>>({})
     const hasErrors = (state.errors && Object.keys(state.errors).length > 0) || Object.keys(clientErrors).length > 0
 
-    // Add effect to handle successful creation
     useEffect(() => {
         if (state.message === 'success') {
             router.push('/campaigns')
@@ -73,7 +73,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
 
     return (
         <section className="max-w-4xl mx-auto p-6">
-            <h1 className="text-3xl text-black font-bold mb-8">Create a New Campaign</h1>
+            <h1 className="text-3xl text-black font-bold mb-8">Edit Campaign</h1>
 
             {hasErrors && (
                 <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg">
@@ -98,6 +98,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                     <FormInput
                         label="Campaign Name"
                         name="name"
+                        defaultValue={campaign.name}
                         placeholder="Enter campaign name"
                         required
                         error={clientErrors.name?.[0]}
@@ -114,6 +115,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                         label="Budget Goal"
                         name="budgetGoal"
                         type="number"
+                        defaultValue={campaign.budgetGoal}
                         min="0"
                         step="0.01"
                         placeholder="Enter budget amount"
@@ -124,6 +126,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                         label="Start Date"
                         name="startDate"
                         type="date"
+                        defaultValue={campaign.startDate.toISOString().split('T')[0]}
                         required
                         error={clientErrors.startDate?.[0]}
                     />
@@ -131,6 +134,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                         label="End Date"
                         name="endDate"
                         type="date"
+                        defaultValue={campaign.endDate.toISOString().split('T')[0]}
                         required
                         error={clientErrors.endDate?.[0]}
                     />
@@ -142,24 +146,25 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                     <FormInput
                         label="Country"
                         name="country"
-                        placeholder="Enter country"
-                        error={clientErrors.country?.[0]}
+                        defaultValue={campaign.country || ''}
+                        placeholder="Enter country"                        
                     />
                     <FormInput
                         label="State"
                         name="state"
-                        placeholder="Enter state"
-                        error={clientErrors.state?.[0]}
+                        defaultValue={campaign.state || ''}
+                        placeholder="Enter state"                        
                     />
                     <FormInput
                         label="City"
                         name="city"
-                        placeholder="Enter city"
-                        error={clientErrors.city?.[0]}
+                        defaultValue={campaign.city || ''}
+                        placeholder="Enter city"                        
                     />
                     <FormInput
                         label="ZIP Code"
                         name="zipCode"
+                        defaultValue={campaign.zipCode || ''}
                         placeholder="Enter ZIP code"
                         error={clientErrors.zipCode?.[0]}
                         onErrorClear={() => {
@@ -179,13 +184,14 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                     <FormInput
                         label="Target Age Ranges"
                         name="targetAge"
+                        defaultValue={campaign.targetAge}
                         placeholder="e.g., 18-24, 25-34"
                         required
                         error={clientErrors.targetAge?.[0]}
                     />
 
                     <div className="space-y-2">
-                        <label className="block text-sm font-semibold text-gray-700">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">
                             Target Gender
                         </label>
                         <div className="flex gap-4">
@@ -198,6 +204,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                                         type="radio"
                                         name="targetGender"
                                         value={gender.id}
+                                        defaultChecked={campaign.targetGender === gender.id}
                                         className="h-4 w-4 border-gray-300"
                                         required
                                     />
@@ -212,7 +219,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                 <div className="space-y-4">
                     <h2 className="text-xl font-semibold text-gray-700">Distribution</h2>
                     <div className="space-y-2">
-                        <label className="block text-sm font-semibold text-gray-700">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">
                             Publishers
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -225,7 +232,8 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                                         type="checkbox"
                                         name="publishers"
                                         value={publisher.id}
-                                        className="h-4 w-4 rounded border-gray-300"
+                                        defaultChecked={campaign.publishers.split(',').includes(publisher.id)}
+                                        className="h-4 w-4 rounded border-gray-300"                                        
                                     />
                                     <span className="text-gray-800 font-medium">{publisher.name}</span>
                                 </label>
@@ -234,7 +242,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="block text-sm font-semibold text-gray-700">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">
                             Screens
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -247,6 +255,7 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                                         type="checkbox"
                                         name="screens"
                                         value={screen.id}
+                                        defaultChecked={campaign.screens.split(',').includes(screen.id)}
                                         className="h-4 w-4 rounded border-gray-300"
                                     />
                                     <span className="text-gray-800 font-medium">{screen.name}</span>
@@ -260,9 +269,9 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
                     type="submit"
                     className="mt-6 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                    Create Campaign
+                    Update Campaign
                 </button>
             </form>
         </section>
     )
-}
+} 
