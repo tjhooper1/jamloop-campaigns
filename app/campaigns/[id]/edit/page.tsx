@@ -21,5 +21,5 @@ export default async function EditCampaignPage({ params }: { params: { id: strin
         notFound()
     }
 
-    return <EditCampaignForm campaign={campaign} userId={session.user.id} />
+    return <EditCampaignForm campaign={campaign} />
 } 

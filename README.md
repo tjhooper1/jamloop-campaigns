@@ -60,4 +60,18 @@ Two demo accounts are available after seeding:
 - Authentication with NextAuth.js
 - SQLite database for simplicity
 
+## Things I would like to add before launch
+- Add monitoring and analytics
+- Add more error handling
+- Add more validation
+- Add more authentication
+- Add better styling
+- Make the UI more server side rendered
+- Install a component library
+- Consolidate styles into tailwind config
+- Add unit tests
+- Add Cypress tests
+- Implement better UX for the create/edit forms (typeahead, autocomplete, throttle, debounce, etc)
+
+
 

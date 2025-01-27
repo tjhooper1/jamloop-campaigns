@@ -1,38 +1,22 @@
 'use client'
 
-import { useActionState, startTransition } from 'react'
-import { createCampaign } from '@/app/campaigns/create/actions'
+import { useState } from 'react'
 import { FormInput } from "@/app/components/ui/form-input"
 import { PUBLISHERS, SCREENS, GENDERS } from "@/lib/publishers"
 import { CreateCampaignInput, createCampaignSchema } from '@/lib/schemas/campaign'
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-type State = {
-    errors: Record<string, string> | null;
-    message: string | null;
-}
-
-const initialState: State = {
-    errors: {},
-    message: null
-}
-
-export function CreateCampaignForm({ userId }: { userId: string }) {
+export function CreateCampaignForm() {
     const router = useRouter()
-    const [state, dispatch] = useActionState(createCampaign.bind(null, userId), initialState)
+    const [isLoading, setIsLoading] = useState(false)
     const [clientErrors, setClientErrors] = useState<Record<string, string[]>>({})
-    const hasErrors = (state.errors && Object.keys(state.errors).length > 0) || Object.keys(clientErrors).length > 0
+    const [serverError, setServerError] = useState<string | null>(null)
 
-    // Add effect to handle successful creation
-    useEffect(() => {
-        if (state.message === 'success') {
-            router.push('/campaigns')
-        }
-    }, [state.message, router])
-
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
+        setIsLoading(true)
+        setServerError(null)
+
         const formData = new FormData(event.currentTarget)
         const data: CreateCampaignInput = {
             name: formData.get('name') as string,
@@ -53,35 +37,51 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
         if (!result.success) {
             setClientErrors(result.error.flatten().fieldErrors)
             window.scrollTo({ top: 0, behavior: 'smooth' })
+            setIsLoading(false)
             return
         }
 
-        setClientErrors({})
-        const formDataToSend = new FormData()
-        Object.entries(data).forEach(([key, value]) => {
-            if (Array.isArray(value)) {
-                value.forEach((v) => formDataToSend.append(key, v))
-            } else {
-                formDataToSend.append(key, value as string | Blob)
-            }
-        })
+        try {
+            const response = await fetch('/api/campaigns', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
 
-        startTransition(() => {
-            dispatch(formDataToSend)
-        })
+            const result = await response.json()
+
+            if (!response.ok) {
+                if (result.errors) {
+                    setClientErrors(result.errors)
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                } else {
+                    throw new Error(result.error || 'Failed to create campaign')
+                }
+                setIsLoading(false)
+                return
+            }
+
+            router.push('/campaigns')
+            router.refresh()
+        } catch (error) {
+            setServerError(error instanceof Error ? error.message : 'An error occurred')
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
         <section className="max-w-4xl mx-auto p-6">
             <h1 className="text-3xl text-black font-bold mb-8">Create a New Campaign</h1>
 
-            {hasErrors && (
+            {(serverError || Object.keys(clientErrors).length > 0) && (
                 <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg">
                     <h2 className="text-lg font-semibold">Please fix the following errors:</h2>
                     <ul className="mt-2 list-disc list-inside">
-                        {state.errors && Object.entries(state.errors).map(([field, error]) => (
-                            <li key={field}>{error}</li>
-                        ))}
+                        {serverError && <li>{serverError}</li>}
                         {Object.entries(clientErrors).map(([field, errors]) => (
                             errors.map((error, index) => (
                                 <li key={`${field}-${index}`}>{error}</li>
@@ -258,9 +258,10 @@ export function CreateCampaignForm({ userId }: { userId: string }) {
 
                 <button
                     type="submit"
-                    className="mt-6 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                    disabled={isLoading}
+                    className="mt-6 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Create Campaign
+                    {isLoading ? "Creating..." : "Create Campaign"}
                 </button>
             </form>
         </section>
