@@ -2,8 +2,8 @@ import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/prisma"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
-import { unstable_cache } from 'next/cache'
 import { CampaignList } from "./campaign-list"
+import { unstable_cache } from 'next/cache'
 
 const getCampaigns = unstable_cache(
     async (userId: string) => {
@@ -12,8 +12,8 @@ const getCampaigns = unstable_cache(
             orderBy: { createdAt: 'desc' }
         })
     },
-    ['campaigns'], // cache key
-    { tags: ['campaigns'], revalidate: 60 } // revalidate every 60 seconds
+    ['campaigns'],
+    { tags: ['campaigns'], revalidate: 60 }
 )
 
 export default async function CampaignsPage() {
